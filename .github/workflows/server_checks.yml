@@ -7,7 +7,7 @@ on:
 
 jobs:
   pr-checks:
-    name: Basic checks
+    name: Basic checks + Vulnerabilities
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -42,7 +42,7 @@ jobs:
 
       - name: Audit
         working-directory: ./server
-        run: yarn audit --groups dependencies --level high
+        run: yarn audit --groups dependencies --level critical
 
       - name: Setup Snyk
         uses: snyk/actions/setup@master
