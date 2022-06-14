@@ -42,7 +42,7 @@ jobs:
 
       - name: Audit
         working-directory: ./server
-        run: yarn audit --groups dependencies --level critical
+        run: npm audit --audit-level=critical
 
       - name: Setup Snyk
         uses: snyk/actions/setup@master
