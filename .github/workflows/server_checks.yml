@@ -1,0 +1,55 @@
+name: Server checks
+
+on:
+  pull_request:
+    paths:
+      - server/**
+
+jobs:
+  pr-checks:
+    name: Basic checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+        name: checkout
+
+      - uses: actions/cache@v2
+        name: Cache yarn
+        env:
+          cache-name: cache-node-modules
+        with:
+          # npm cache files are stored in '~/.npm' on Linux/MacOS
+          path: ~/.npm
+          key: ${{runner.os}}-yarn-${{env.cache-name}}-${{hashFiles('**/yarn.lock')}}
+          restore-keys: ${{runner.os}}-yarn-${{env.cache-name}}-${{hashFiles('**/yarn.lock')}}
+
+      - name: Install Dependencies
+        working-directory: ./server
+        run: yarn install
+
+      - name: Lint
+        working-directory: ./server
+        run: yarn lint
+
+      - name: Build
+        working-directory: ./server
+        run: yarn build
+
+      - name: Test
+        working-directory: ./api
+        run: yarn test
+
+      - name: Audit
+        working-directory: ./server
+        run: yarn audit --groups dependencies --level high
+
+      - name: Setup Snyk
+        uses: snyk/actions/setup@master
+
+      - name: Snyk monitor backend (server)
+        working-directory: ./server
+        run: snyk test
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: true
