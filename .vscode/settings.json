@@ -1,0 +1,11 @@
+{
+  "javascript.validate.enable": true,
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": false,
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": false,
+  "typescript.validate.enable": true,
+  "typescript.tsdk": "node_modules/typescript/lib"
+}
