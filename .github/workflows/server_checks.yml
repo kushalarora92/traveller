@@ -42,7 +42,7 @@ jobs:
 
       - name: Audit
         working-directory: ./server
-        run: npm audit --audit-level=critical
+        run: npm audit --audit-level=high
 
       - name: Setup Snyk
         uses: snyk/actions/setup@master
