@@ -37,7 +37,7 @@ jobs:
         run: yarn build
 
       - name: Test
-        working-directory: ./api
+        working-directory: ./server
         run: yarn test
 
       - name: Audit
