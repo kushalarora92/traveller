@@ -51,5 +51,5 @@ jobs:
         working-directory: ./server
         run: snyk test
         env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          SNYK_TOKEN: '9e554950-a029-47fa-b3e7-9c795e8c7606'
         continue-on-error: true
