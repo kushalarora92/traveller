@@ -15,34 +15,34 @@ jobs:
         name: checkout
 
       - uses: actions/cache@v2
-        name: Cache yarn
+        name: Cache npm
         env:
           cache-name: cache-node-modules
         with:
           # npm cache files are stored in '~/.npm' on Linux/MacOS
           path: ~/.npm
-          key: ${{runner.os}}-yarn-${{env.cache-name}}-${{hashFiles('**/yarn.lock')}}
-          restore-keys: ${{runner.os}}-yarn-${{env.cache-name}}-${{hashFiles('**/yarn.lock')}}
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
 
       - name: Install Dependencies
         working-directory: ./server
-        run: yarn install
+        run: npm install
 
       - name: Lint
         working-directory: ./server
-        run: yarn lint
+        run: npm run lint
 
       - name: Build
         working-directory: ./server
-        run: yarn build
+        run: npm run build
 
       - name: Test
         working-directory: ./server
-        run: yarn test
+        run: npm run test
 
       - name: Audit
         working-directory: ./server
-        run: npm audit --audit-level=high
+        run: npm audit --audit-level=critical
 
       - name: Setup Snyk
         uses: snyk/actions/setup@master
