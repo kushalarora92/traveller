@@ -27,7 +27,7 @@ endef
 # run-pipeline				 - Run pipeline for production env
 
 setup-env-dev:				| setup-root-env setup-dev-env-server setup-dev-env-client
-setup-env-prod:				| setup-root-env setup-prod-env-server setup-prod-env-server
+setup-env-prod:				| setup-root-env setup-prod-env-server setup-prod-env-client
 local-development:          | build-local-development run-local-development
 local-production:           | build-local-production run-local-production
 run-pipeline:				| run-pipeline

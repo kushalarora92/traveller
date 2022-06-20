@@ -23,7 +23,7 @@ jobs:
         run: chmod +x ./.scripts/isitup.sh
 
       - name: Server Healthcheck with curl
-        run: ./scripts/isitup.sh localhost:4000
+        run: ./.scripts/isitup.sh localhost:4000
 
       # - name: Client Healthcheck with curl
       #   run: ./.scripts/isitup.sh localhost:3000
