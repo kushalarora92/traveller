@@ -1,0 +1,55 @@
+name: Server checks
+
+on:
+  pull_request:
+    paths:
+      - server/**
+
+jobs:
+  pr-checks:
+    name: Basic checks + Vulnerabilities
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+        name: checkout
+
+      - uses: actions/cache@v2
+        name: Cache npm
+        env:
+          cache-name: cache-node-modules
+        with:
+          # npm cache files are stored in '~/.npm' on Linux/MacOS
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+
+      - name: Install Dependencies
+        working-directory: ./server
+        run: npm install
+
+      - name: Lint
+        working-directory: ./server
+        run: npm run lint
+
+      - name: Build
+        working-directory: ./server
+        run: npm run build
+
+      - name: Test
+        working-directory: ./server
+        run: npm run test
+
+      - name: Audit
+        working-directory: ./server
+        run: npm audit --audit-level=critical
+
+      - name: Setup Snyk
+        uses: snyk/actions/setup@master
+
+      - name: Snyk monitor backend (server)
+        working-directory: ./server
+        run: snyk test
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: true
