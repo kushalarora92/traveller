@@ -1,0 +1,63 @@
+name: Docker Compose Up + ZAP Scan
+on:
+  pull_request:
+  push:
+    branches:
+      - 'dev'
+      - 'main'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        name: checkout
+
+      - name: setup the environment
+        run: make setup-env-prod
+
+      - name: Build the stack
+        run: make run-pipeline
+
+      - name: Make executeable
+        run: chmod +x ./.scripts/isitup.sh
+
+      - name: Server Healthcheck with curl
+        run: ./scripts/isitup.sh localhost:4000
+
+      # - name: Client Healthcheck with curl
+      #   run: ./.scripts/isitup.sh localhost:3000
+
+      - name: Run Trivy vulnerability scanner on Server
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: traveller_app-server:latest
+          format: 'table'
+          exit-code: 0
+          ignore-unfixed: true
+          vuln-type: 'os'
+          severity: 'CRITICAL,HIGH'
+
+      # - name: Run Trivy vulnerability scanner on Client
+      #   uses: aquasecurity/trivy-action@master
+      #   with:
+      #     image-ref: traveller_app-client:latest
+      #     format: 'table'
+      #     exit-code: 0
+      #     ignore-unfixed: true
+      #     vuln-type: 'os'
+      #     severity: 'CRITICAL,HIGH'
+
+      - name: ZAP Scan Server
+        uses: zaproxy/action-full-scan@v0.3.0
+        with:
+          token: ${{ secrets.GIT_TOKEN }}
+          target: http://localhost:4000
+          fail_action: false
+
+      # - name: ZAP Scan Client
+      #   uses: zaproxy/action-full-scan@v0.3.0
+      #   with:
+      #     token: ${{ secrets.GIT_TOKEN }}
+      #     target: http://localhost:3000
+      #     fail_action: false
